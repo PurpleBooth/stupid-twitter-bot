@@ -5,6 +5,7 @@ import time
 import redis
 from random import shuffle
 
+SECONDS_BETWEEN_TWEETS = 60 * 60
 WORDLIST_TXT = "wordlist.txt"
 REDIS_KEY = "words"
 
@@ -40,6 +41,6 @@ try:
     while True:
         word = conn.lpop(REDIS_KEY)
         post(word)
-        time.sleep(60 * 60)
+        time.sleep(SECONDS_BETWEEN_TWEETS)
 except:
     print "Done, bye!"
