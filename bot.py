@@ -8,9 +8,10 @@ from random import shuffle
 SECONDS_BETWEEN_TWEETS = 60 * 60
 WORDLIST_TXT = "wordlist.txt"
 redis_key = os.getenv('WORDLIST_KEY', 'words')
-redis_url = 'redis://' + os.getenv('REDIS_PORT_6379_TCP_ADDR', 'localhost') + ':' + os.getenv(
-    'REDIS_PORT_6379_TCP_PORT', '6379')
-conn = redis.from_url(redis_url)
+conn = redis.Redis(host=os.getenv('REDIS_PORT_6379_TCP_ADDR', 'localhost'),
+                      port=os.getenv('REDIS_PORT_6379_TCP_PORT', '6379'),
+                      password=os.getenv('REDIS_ENV_REDIS_PASS', None))
+
 p = inflect.engine()
 api = twitter.Api(consumer_key=os.getenv('TWITTER_CONSUMER_KEY', ''),
                   consumer_secret=os.getenv('TWITTER_CONSUMER_SECRET', ''),
