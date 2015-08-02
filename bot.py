@@ -7,8 +7,7 @@ from random import shuffle
 
 SECONDS_BETWEEN_TWEETS = 60 * 60
 WORDLIST_TXT = "wordlist.txt"
-REDIS_KEY = "words"
-
+redis_key = os.getenv('WORDLIST_KEY', 'words')
 redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 conn = redis.from_url(redis_url)
 p = inflect.engine()
@@ -17,7 +16,7 @@ api = twitter.Api(consumer_key=os.getenv('TWITTER_CONSUMER_KEY', ''),
                   access_token_key=os.getenv('TWITTER_ACCESS_KEY', ''),
                   access_token_secret=os.getenv('TWITTER_TOKEN_SECRET', ''))
 
-if not conn.exists(REDIS_KEY):
+if not conn.exists(redis_key):
     words = []
     with open(WORDLIST_TXT, "r") as lines:
         for line in lines:
@@ -27,7 +26,7 @@ if not conn.exists(REDIS_KEY):
     
     for word in words:
         print "Appending words " + word
-        conn.lpush(REDIS_KEY, word)
+        conn.lpush(redis_key, word)
 
 print "It's alive!"
 
@@ -39,7 +38,7 @@ def post(word):
 
 try:
     while True:
-        word = conn.lpop(REDIS_KEY)
+        word = conn.lpop(redis_key)
         post(word)
         time.sleep(SECONDS_BETWEEN_TWEETS)
 except:
